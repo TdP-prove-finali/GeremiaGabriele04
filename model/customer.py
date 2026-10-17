@@ -24,4 +24,4 @@ class Customer:
         return hash(self.CustomerId)
 
     def __str__(self):
-        return f"{self.CustomerId} - {self.FirstName} {self.LastName}"
+        return f"{self.LastName} {self.FirstName} [ID:{self.CustomerId}]"
