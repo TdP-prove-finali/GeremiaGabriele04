@@ -19,6 +19,7 @@ class Controller:
         print(f"hai selezionato {self._choiceCountry}")
 
     def fillDDCustomer(self):
+        self._view._ddCustomer.options.clear()
         allCustomer = self._model.getCustomers()
         for a in allCustomer:
             self._view._ddCustomer.options.append(
@@ -52,11 +53,21 @@ class Controller:
             self._view.update_page()
 
 
-    def handleTop5Canzoni(self, e):
-        pass
+    def handleTop5Tracks(self, e):
+        lista = self._model.getTop5Tracks(self._choiceCountry)
+        self._view.txt_result.controls.clear()
+        self._view.txt_result.controls.append(ft.Text("Ecco le 5 canzoni più vendute e l'incasso totale ricavato:"))
+        for tupla in lista:
+            self._view.txt_result.controls.append(ft.Text(f"{tupla[0].stampa()}\nArtista: {tupla[2]}\nAlbum: {tupla[3]}\nGenere: {tupla[4]}\nCosto unitario: {tupla[0].UnitPrice}\nNumero di vendite: {tupla[1]}\nIncasso totale: {tupla[1] * tupla[0].UnitPrice}€"))
+            self._view.update_page()
 
     def handleRankEmployee(self, e):
-        pass
+        lista = self._model.getRankEmployees(self._choiceCountry)
+        self._view.txt_result.controls.clear()
+        self._view.txt_result.controls.append(ft.Text("Ecco le prestazioni dei dipendenti, in termini di clienti soddisfatti appartenenti alla nazione selezionata, numero di tracce vendute e ricavo ottenuto da tali vendite:"))
+        for tupla in lista:
+            self._view.txt_result.controls.append(ft.Text(f"{tupla[0].stampa()}\nNumero clienti: {tupla[1]}\nNumero tracce: {tupla[2]}\nRicavo complessivo: {tupla[3]}€"))
+            self._view.update_page()
 
     def handleCammino(self, e):
         pass

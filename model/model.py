@@ -8,6 +8,10 @@ class Model:
         self._graph = nx.Graph()
         self._allNodes = []
         self._idMapCustomer = {}
+        self._allTracks = []
+        self._idMapTrack = {}
+        self._allEmployees = []
+        self._idMapEmployee = {}
 
     def buildGraph(self, country):
         self._graph.clear()
@@ -64,4 +68,47 @@ class Model:
             lista.append((customer, numTrack, total))
 
         return lista[:5]
+
+    def getTop5Tracks(self, country):
+        self._idMapTrack.clear()
+
+        self._allTracks = DAO.getAllTracks(country)
+        for a in self._allTracks:
+            self._idMapTrack[a.TrackId] = a
+
+        listaIDAcquisti = DAO.getAllAcquisti(country)
+        dictionaryArtistAlbumGenre = DAO.getAllArtistAlbumGenre(country)
+        lista = []
+        for tupla in listaIDAcquisti:
+            track = self._idMapTrack[tupla[0]]
+            artist = dictionaryArtistAlbumGenre[tupla[0]][0]
+            album = dictionaryArtistAlbumGenre[tupla[0]][1]
+            genre = dictionaryArtistAlbumGenre[tupla[0]][2]
+            lista.append((track, tupla[1], artist, album, genre))
+
+        return lista[:5]
+
+    def getRankEmployees(self, country):
+        self._idMapEmployee.clear()
+
+        self._allEmployees = DAO.getAllEmployees(country)
+        for a in self._allEmployees:
+            self._idMapEmployee[a.EmployeeId] = a
+
+        dictionaryEmpStats = DAO.getAllEmpStats(country)
+        lista = []
+        for idEmp in dictionaryEmpStats.keys():
+            emp = self._idMapEmployee[idEmp]
+            numClienti = dictionaryEmpStats[idEmp][0]
+            numTracce = dictionaryEmpStats[idEmp][1]
+            ricavo = float(dictionaryEmpStats[idEmp][2])
+            lista.append((emp, numClienti, numTracce, ricavo))
+
+        return lista
+
+
+
+
+
+
 
