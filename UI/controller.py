@@ -43,8 +43,14 @@ class Controller:
         self.fillDDCustomer()
         self._view.update_page()
 
-    def handleTop5Clienti(self, e):
-        pass
+    def handleTop5Customers(self, e):
+        lista = self._model.getTop5Customers(self._choiceCountry)
+        self._view.txt_result.controls.clear()
+        self._view.txt_result.controls.append(ft.Text("Ecco i migliori 5 clienti per numero di canzoni acquistate e importo complessivo pagato:"))
+        for tupla in lista:
+            self._view.txt_result.controls.append(ft.Text(f"{tupla[0].stampa()}\nCanzoni acquistate: {tupla[1]}\nImporto totale: {tupla[2]}€"))
+            self._view.update_page()
+
 
     def handleTop5Canzoni(self, e):
         pass

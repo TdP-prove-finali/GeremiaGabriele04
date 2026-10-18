@@ -30,7 +30,7 @@ class View(ft.UserControl):
 
         #Top5Clienti + TopCVendute + Class.Emp.
         self._btnTop5Clienti = ft.ElevatedButton(text="Top Clienti",
-                                               on_click=self._controller.handleTop5Clienti, width=250)
+                                               on_click=self._controller.handleTop5Customers, width=250)
         self._btnTop5Canzoni = ft.ElevatedButton(text="Top Canzoni",
                                                on_click=self._controller.handleTop5Canzoni, width=250)
         self._btnRankEmployee = ft.ElevatedButton(text="Classifica dipendenti",

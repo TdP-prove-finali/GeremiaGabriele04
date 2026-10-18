@@ -68,3 +68,28 @@ class DAO():
         cursor.close()
         conn.close()
         return results
+
+    @staticmethod
+    def getAllTotali(country):
+        conn = DBConnect.get_connection()
+
+        results = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select t.CustomerId as customerId, sum(t.Total) as totale
+                    from (select c.CustomerId, i.InvoiceId , i2.Total 
+                            from invoiceline i , invoice i2 , customer c 
+                            where i.InvoiceId = i2.InvoiceId and i2.CustomerId = c.CustomerId and c.Country = %s
+                            group by c.CustomerId , i.InvoiceId, i2.Total
+                            order by c.CustomerId, i.InvoiceId  asc) as t
+                    group by t.CustomerId
+                    order by sum(t.Total) desc """
+
+        cursor.execute(query, (country,))
+
+        for row in cursor:
+            results.append((row["customerId"], row["totale"]))
+
+        cursor.close()
+        conn.close()
+        return results

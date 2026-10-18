@@ -50,3 +50,18 @@ class Model:
 
     def getNumArchi(self):
         return len(self._graph.edges)
+
+    def getTop5Customers(self, country):
+        listaIDTotal = DAO.getAllTotali(country)
+        dictionaryIDTrack = DAO.getAllEdges(country, self._idMapCustomer)
+        lista = []
+        #[(idC, numTrack, total), ...]
+
+        for tupla in listaIDTotal:
+            customer = self._idMapCustomer[tupla[0]]
+            numTrack = len(list(dictionaryIDTrack[tupla[0]]))
+            total = float(tupla[1])
+            lista.append((customer, numTrack, total))
+
+        return lista[:5]
+
