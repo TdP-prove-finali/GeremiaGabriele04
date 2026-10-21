@@ -39,12 +39,48 @@ class Model:
                 c1 = self._idMapCustomer[c[0]]
                 c2 = self._idMapCustomer[c[1]]
                 risultato = len(list(set(dictionaryID[c[0]]).intersection(dictionaryID[c[1]])))
-                print(c[0], c[1], risultato)
+                #print(c[0], c[1], risultato)
                 self._graph.add_edge(c1, c2, weight=risultato)
                 listaAggiunti.append((c[1], c[0]))
 
-    def getCrossSellingPlan(customer):
-        pass
+    def buildCSPlan(self, start):
+        parziale = [start]
+        tutti_i_nodi = list(self._graph.nodes())
+
+        # Finchè non abbiamo visitato tutti i nodi
+        while len(parziale) < len(tutti_i_nodi):
+            ultimo_nodo = parziale[-1]
+            miglior_vicino = None
+            max_peso = -1
+
+            # Cerchiamo il vicino non ancora visitato collegato con l'arco più pesante
+            for n in self._graph.neighbors(ultimo_nodo):
+                if n not in parziale:
+                    peso = self._graph[ultimo_nodo][n].get('weight', 0)
+                    if peso > max_peso:
+                        max_peso = peso
+                        miglior_vicino = n
+
+            # Se per qualche motivo rimaniamo isolati, interrompiamo
+            if miglior_vicino is None:
+                break
+
+            parziale.append(miglior_vicino)
+
+        num_archi = len(parziale) - 1 if parziale else 0
+        return parziale, num_archi
+
+    def getCrossSellingPlan(self, start):
+        path, score = self.buildCSPlan(start)
+
+        #1.trovo il genre che piace di più allo start
+
+        #2.prendo dalle liste degli idtracce degli altri tutte le canzoni di quel genre,
+        #ma non ancora comprate da start
+
+        #3.trovato l'insieme, ranko in ordine decrescente di numero di acquisti (anche su scala mondiale)
+
+        #4.restituisco allo start le prime 5 della lista a mo "A [start] potrebbero piacere anche..."
 
 
     def getAllCountry(self):
