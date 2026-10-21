@@ -82,6 +82,8 @@ class Model:
 
         #4.restituisco allo start le prime 5 della lista a mo "A [start] potrebbero piacere anche..."
 
+        #5.calcolo per ciascuna il numero di clienti che lhanno acquistata "Acquisto verificato da n clienti"
+
 
     def getAllCountry(self):
         return DAO.getAllCountry()

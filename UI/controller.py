@@ -106,5 +106,7 @@ class Controller:
 
         lista = self._model.getCrossSellingPlan(self._choiceCustomer)
         self._view.txt_result.controls.clear()
+        #
         self._view.txt_result.controls.append(ft.Text("Ciao mondo"))
+        #
         self._view.update_page()
