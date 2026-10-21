@@ -30,18 +30,18 @@ class View(ft.UserControl):
 
         #Top5Clienti + TopCVendute + Class.Emp.
         self._btnTop5Clienti = ft.ElevatedButton(text="Top Clienti",
-                                               on_click=self._controller.handleTop5Customers, width=250)
+                                               on_click=self._controller.handleTop5Customers, width=250, disabled=True)
         self._btnTop5Canzoni = ft.ElevatedButton(text="Top Canzoni",
-                                               on_click=self._controller.handleTop5Tracks, width=250)
+                                               on_click=self._controller.handleTop5Tracks, width=250, disabled=True)
         self._btnRankEmployee = ft.ElevatedButton(text="Classifica dipendenti",
-                                               on_click=self._controller.handleRankEmployee, width=250)
+                                               on_click=self._controller.handleRankEmployee, width=250, disabled=True)
         row2 = ft.Row([self._btnTop5Clienti, self._btnTop5Canzoni, self._btnRankEmployee],
                       alignment=ft.MainAxisAlignment.CENTER)
         self._page.controls.append(row2)
 
         #Cliente + PianoCrossSelling
-        self._ddCustomer = ft.Dropdown(label="Cliente", width=250)
-        self._btnCammino = ft.ElevatedButton(text="Genera Cross-Selling", on_click=self._controller.handleCammino, width=250)
+        self._ddCustomer = ft.Dropdown(label="Cliente", width=250, disabled=True)
+        self._btnCammino = ft.ElevatedButton(text="Genera Cross-Selling", on_click=self._controller.handleCammino, width=250, disabled=True)
 
         row3 = ft.Row([self._ddCustomer, self._btnCammino],
                       alignment=ft.MainAxisAlignment.CENTER)

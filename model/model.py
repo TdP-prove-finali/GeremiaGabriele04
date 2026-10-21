@@ -39,6 +39,7 @@ class Model:
                 c1 = self._idMapCustomer[c[0]]
                 c2 = self._idMapCustomer[c[1]]
                 risultato = len(list(set(dictionaryID[c[0]]).intersection(dictionaryID[c[1]])))
+                print(c[0], c[1], risultato)
                 self._graph.add_edge(c1, c2, weight=risultato)
                 listaAggiunti.append((c[1], c[0]))
 

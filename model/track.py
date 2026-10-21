@@ -23,4 +23,5 @@ class Track:
         return f"{self.TrackId} - {self.Name}"
 
     def stampa(self):
-        return f"ID: {self.TrackId}\nNome: {self.Name}"
+        return (f"**ID:** {self.TrackId}  \n"
+                f"*Nome:* {self.Name}")

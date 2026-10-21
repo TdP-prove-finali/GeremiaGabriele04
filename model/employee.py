@@ -30,4 +30,9 @@ class Employee:
         return f"{self.LastName} {self.FirstName} [ID:{self.EmployeeId}]"
 
     def stampa(self):
-        return f"Cognome: {self.LastName}\nNome: {self.FirstName}\nIDImpiegato: {self.EmployeeId}\nRuolo: {self.Title}\nNumero di telefono: {self.Phone}\nEmail: {self.Email}"
+        return (f"**Cognome:** {self.LastName}  \n"
+                f"**Nome:** {self.FirstName}  \n"
+                f"*ID Impiegato:* {self.EmployeeId}  \n"
+                f"*Ruolo:* {self.Title}  \n"
+                f"*Numero di telefono:* {self.Phone}  \n"
+                f"*Email:* {self.Email}")

@@ -37,36 +37,64 @@ class Controller:
             return
 
         self._model.buildGraph(self._choiceCountry)
+
+        self._view._btnTop5Clienti.disabled = False
+        self._view._btnTop5Canzoni.disabled = False
+        self._view._btnRankEmployee.disabled = False
+        self._view._ddCustomer.disabled = False
+        self._view._btnCammino.disabled = False
+
         self._view.txt_result.controls.clear()
-        self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato"))
-        self._view.txt_result.controls.append(ft.Text(f"Numero di nodi: {self._model.getNumNodi()}"))
-        self._view.txt_result.controls.append(ft.Text(f"Numero di archi: {self._model.getNumArchi()}"))
+        self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato!", color="green"))
+        self._view.txt_result.controls.append(ft.Text("Selezionare una funzione del sistema."))
+        #self._view.txt_result.controls.append(ft.Text(f"Numero di nodi: {self._model.getNumNodi()}"))
+        #self._view.txt_result.controls.append(ft.Text(f"Numero di archi: {self._model.getNumArchi()}"))
         self.fillDDCustomer()
         self._view.update_page()
 
     def handleTop5Customers(self, e):
         lista = self._model.getTop5Customers(self._choiceCountry)
         self._view.txt_result.controls.clear()
-        self._view.txt_result.controls.append(ft.Text("Ecco i migliori 5 clienti per numero di canzoni acquistate e importo complessivo pagato:"))
+        self._view.txt_result.controls.append(ft.Text("Di seguito i migliori 5 clienti per numero di canzoni acquistate e importo complessivo pagato:"))
         for tupla in lista:
-            self._view.txt_result.controls.append(ft.Text(f"{tupla[0].stampa()}\nCanzoni acquistate: {tupla[1]}\nImporto totale: {tupla[2]}€"))
+            self._view.txt_result.controls.append(ft.Markdown(
+            f"{tupla[0].stampa()}  \n"
+            f"**Canzoni acquistate:** {tupla[1]}  \n"
+            f"**Importo totale:** **{tupla[2]}€**"
+            ))
+            self._view.txt_result.controls.append(ft.Text(f"\n"))
             self._view.update_page()
 
 
     def handleTop5Tracks(self, e):
         lista = self._model.getTop5Tracks(self._choiceCountry)
         self._view.txt_result.controls.clear()
-        self._view.txt_result.controls.append(ft.Text("Ecco le 5 canzoni più vendute e l'incasso totale ricavato:"))
+        self._view.txt_result.controls.append(ft.Text("Di seguito le 5 canzoni più vendute e l'incasso totale ricavato:"))
         for tupla in lista:
-            self._view.txt_result.controls.append(ft.Text(f"{tupla[0].stampa()}\nArtista: {tupla[2]}\nAlbum: {tupla[3]}\nGenere: {tupla[4]}\nCosto unitario: {tupla[0].UnitPrice}\nNumero di vendite: {tupla[1]}\nIncasso totale: {tupla[1] * tupla[0].UnitPrice}€"))
+            self._view.txt_result.controls.append(ft.Markdown(
+                f"{tupla[0].stampa()}  \n"
+                f"*Artista:* {tupla[2]}  \n"
+                f"*Album:* {tupla[3]}  \n"
+                f"*Genere:* {tupla[4]}  \n"
+                f"Costo unitario: {tupla[0].UnitPrice}  \n"
+                f"**Numero di vendite:** {tupla[1]}  \n"
+                f"**Incasso totale:** **{tupla[1] * tupla[0].UnitPrice}€**"
+            ))
+            self._view.txt_result.controls.append(ft.Text(f"\n"))
             self._view.update_page()
 
     def handleRankEmployee(self, e):
         lista = self._model.getRankEmployees(self._choiceCountry)
         self._view.txt_result.controls.clear()
-        self._view.txt_result.controls.append(ft.Text("Ecco le prestazioni dei dipendenti, in termini di clienti soddisfatti appartenenti alla nazione selezionata, numero di tracce vendute e ricavo ottenuto da tali vendite:"))
+        self._view.txt_result.controls.append(ft.Text("Di seguito le prestazioni dei dipendenti, in termini di clienti soddisfatti appartenenti alla nazione selezionata, numero di tracce vendute e ricavo ottenuto da tali vendite:"))
         for tupla in lista:
-            self._view.txt_result.controls.append(ft.Text(f"{tupla[0].stampa()}\nNumero clienti: {tupla[1]}\nNumero tracce: {tupla[2]}\nRicavo complessivo: {tupla[3]}€"))
+            self._view.txt_result.controls.append(ft.Markdown(
+                f"{tupla[0].stampa()}  \n"
+                f"**Numero clienti:** {tupla[1]}  \n"
+                f"**Numero tracce:** {tupla[2]}  \n"
+                f"**Ricavo complessivo:** **{tupla[3]}€**"
+            ))
+            self._view.txt_result.controls.append(ft.Text(f"\n"))
             self._view.update_page()
 
     def handleCammino(self, e):

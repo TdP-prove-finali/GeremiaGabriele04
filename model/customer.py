@@ -27,4 +27,10 @@ class Customer:
         return f"{self.LastName} {self.FirstName} [ID:{self.CustomerId}]"
 
     def stampa(self):
-        return f"Cognome: {self.LastName}\nNome: {self.FirstName}\nIDCliente: {self.CustomerId}\nNumero di telefono: {self.Phone}\nEmail: {self.Email}"
+        return (
+            f"**Cognome:** {self.LastName}  \n"
+            f"**Nome:** {self.FirstName}  \n"
+            f"*ID Cliente:* {self.CustomerId}  \n"
+            f"*Numero di telefono:* {self.Phone}  \n"
+            f"*Email:* {self.Email}"
+        )
