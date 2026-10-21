@@ -59,7 +59,7 @@ class Controller:
         for tupla in lista:
             self._view.txt_result.controls.append(ft.Markdown(
             f"{tupla[0].stampa()}  \n"
-            f"**Canzoni acquistate:** {tupla[1]}  \n"
+            f"**Canzoni acquistate:** **{tupla[1]}**  \n"
             f"**Importo totale:** **{tupla[2]}€**"
             ))
             self._view.txt_result.controls.append(ft.Text(f"\n"))
@@ -76,8 +76,8 @@ class Controller:
                 f"*Artista:* {tupla[2]}  \n"
                 f"*Album:* {tupla[3]}  \n"
                 f"*Genere:* {tupla[4]}  \n"
-                f"Costo unitario: {tupla[0].UnitPrice}  \n"
-                f"**Numero di vendite:** {tupla[1]}  \n"
+                f"*Costo unitario:* {tupla[0].UnitPrice}  \n"
+                f"**Numero di vendite:** **{tupla[1]}**  \n"
                 f"**Incasso totale:** **{tupla[1] * tupla[0].UnitPrice}€**"
             ))
             self._view.txt_result.controls.append(ft.Text(f"\n"))
@@ -98,4 +98,10 @@ class Controller:
             self._view.update_page()
 
     def handleCammino(self, e):
-        pass
+        if self._choiceCustomer is None:
+            self._view.txt_result.controls.clear()
+            self._view.txt_result.controls.append(ft.Text("Per poter procedere con la generazione del piano di Cross-Selling, selezionare un cliente.", color="red"))
+            self._view.update_page()
+            return
+
+        path, score = self._model.getCrossSellingPlan(self._choiceCustomer)

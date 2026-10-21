@@ -43,6 +43,9 @@ class Model:
                 self._graph.add_edge(c1, c2, weight=risultato)
                 listaAggiunti.append((c[1], c[0]))
 
+    def getCrossSellingPlan(customer):
+        pass
+
 
     def getAllCountry(self):
         return DAO.getAllCountry()
