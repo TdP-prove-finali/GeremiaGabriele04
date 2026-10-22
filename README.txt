@@ -3,7 +3,7 @@ Istruzioni per l'utilizzo del software
 
 2. Importare il progetto nel proprio ambiente di svilippo
 
-3. Importare il data-set "#########" dalla cartella database, inserendo le proprie credenziali nel file connector.cnf
+3. Importare il data-set "chinook_modified.sql" dalla cartella database, inserendo le proprie credenziali nel file connector.cnf
 
 4. Eseguire il file "main" del progetto per avviare il programma
 
