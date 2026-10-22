@@ -62,7 +62,8 @@ class Controller:
             f"**Canzoni acquistate:** **{tupla[1]}**  \n"
             f"**Importo totale:** **{tupla[2]}€**"
             ))
-            self._view.txt_result.controls.append(ft.Text(f"\n"))
+            if tupla != lista[-1]:
+                self._view.txt_result.controls.append(ft.Text(f"-------------------------------------------"))
             self._view.update_page()
 
 
@@ -80,7 +81,8 @@ class Controller:
                 f"**Numero di vendite:** **{tupla[1]}**  \n"
                 f"**Incasso totale:** **{tupla[1] * tupla[0].UnitPrice}€**"
             ))
-            self._view.txt_result.controls.append(ft.Text(f"\n"))
+            if tupla != lista[-1]:
+                self._view.txt_result.controls.append(ft.Text(f"-------------------------------------------"))
             self._view.update_page()
 
     def handleRankEmployee(self, e):
@@ -94,7 +96,8 @@ class Controller:
                 f"**Numero tracce:** {tupla[2]}  \n"
                 f"**Ricavo complessivo:** **{tupla[3]}€**"
             ))
-            self._view.txt_result.controls.append(ft.Text(f"\n"))
+            if tupla != lista[-1]:
+                self._view.txt_result.controls.append(ft.Text(f"-------------------------------------------"))
             self._view.update_page()
 
     def handleCammino(self, e):
@@ -104,9 +107,29 @@ class Controller:
             self._view.update_page()
             return
 
-        lista = self._model.getCrossSellingPlan(self._choiceCustomer)
+        lista, dizionario, genere = self._model.getCrossSellingPlan(self._choiceCustomer, self._choiceCountry)
         self._view.txt_result.controls.clear()
-        #
-        self._view.txt_result.controls.append(ft.Text("Ciao mondo"))
-        #
-        self._view.update_page()
+        self._view.txt_result.controls.append(ft.Text(
+            f"Piano di Cross-Selling correttamente generato!", color="green"
+        ))
+        self._view.txt_result.controls.append(ft.Markdown(
+            f"Riguardo al genere **{genere}**, all'utente **{self._choiceCustomer.LastName}** **{self._choiceCustomer.FirstName}** potrebbero piacere anche:"
+        ))
+        for t in lista:
+            if t[1] > 1:
+                self._view.txt_result.controls.append(ft.Markdown(
+                    f"{t[0].stampa()}  \n"
+                    f"*Artista:* {dizionario[t[0].TrackId][0]}  \n"
+                    f"*Album:* {dizionario[t[0].TrackId][1]}  \n"
+                    f"*Prezzo:* {t[0].UnitPrice}€  \n"
+                    f"*(Acquisto verificato da *{t[1]}* clienti in {self._choiceCountry})*  \n"
+                ))
+            else:
+                self._view.txt_result.controls.append(ft.Markdown(
+                    f"{t[0].stampa()}  \n"
+                    f"*Artista:* {dizionario[t[0].TrackId][0]}  \n"
+                    f"*Album:* {dizionario[t[0].TrackId][1]}  \n"
+                    f"*Prezzo:* {t[0].UnitPrice}€  \n"
+                    f"*(Acquisto verificato da *{t[1]}* cliente in {self._choiceCountry})*  \n"
+                ))
+            self._view.update_page()

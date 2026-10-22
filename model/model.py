@@ -17,10 +17,15 @@ class Model:
         self._graph.clear()
         self._graph.clear_edges()
         self._idMapCustomer.clear()
+        self._idMapTrack.clear()
 
         self._allNodes = DAO.getAllNodes(country)
         for a in self._allNodes:
             self._idMapCustomer[a.CustomerId] = a
+
+        self._allTracks = DAO.getAllTracks(country)
+        for a in self._allTracks:
+            self._idMapTrack[a.TrackId] = a
 
         self._graph.add_nodes_from(self._allNodes)
         self.addEdges(country)
@@ -43,37 +48,85 @@ class Model:
                 self._graph.add_edge(c1, c2, weight=risultato)
                 listaAggiunti.append((c[1], c[0]))
 
-    def buildCSPlan(self, start):
+    def buildCSPlan(self, start, genere_target, dict_generi_disponibili):
         parziale = [start]
         tutti_i_nodi = list(self._graph.nodes())
 
-        # Finchè non abbiamo visitato tutti i nodi
+        # Finché non abbiamo visitato tutti i nodi
         while len(parziale) < len(tutti_i_nodi):
             ultimo_nodo = parziale[-1]
             miglior_vicino = None
             max_peso = -1
 
-            # Cerchiamo il vicino non ancora visitato collegato con l'arco più pesante
+            # Cerchiamo tra i vicini non ancora visitati
             for n in self._graph.neighbors(ultimo_nodo):
                 if n not in parziale:
-                    peso = self._graph[ultimo_nodo][n].get('weight', 0)
-                    if peso > max_peso:
-                        max_peso = peso
-                        miglior_vicino = n
+                    # 3. Verifichiamo se il vicino ha il genere preferito richiesto
+                    # (controllando nel nostro dizionario di supporto)
+                    genere_vicino = dict_generi_disponibili.get(n.CustomerId)
 
-            # Se per qualche motivo rimaniamo isolati, interrompiamo
+                    if genere_vicino == genere_target:
+                        peso = self._graph[ultimo_nodo][n].get('weight', 0)
+
+                        # Scegliamo quello con l'arco più pesante (massimizzando le affinità)
+                        if peso > max_peso:
+                            max_peso = peso
+                            miglior_vicino = n
+
+            # Se nessun vicino soddisfa i requisiti o non ce ne sono altri, ci fermiamo
             if miglior_vicino is None:
                 break
 
             parziale.append(miglior_vicino)
 
-        num_archi = len(parziale) - 1 if parziale else 0
-        return parziale, num_archi
+            # (Opzionale ma pulito) Rimuoviamo il nodo appena aggiunto dai disponibili
+            dict_generi_disponibili.pop(miglior_vicino.CustomerId, None)
 
-    def getCrossSellingPlan(self, start):
-        path, score = self.buildCSPlan(start)
+        return parziale[1:]
 
-        #1.trovo il genre che piace di più allo start
+    def getCrossSellingPlan(self, start, country):
+        #1.trovo {idCliente: genrePref, ...}
+        dictIDGenPref = DAO.getAllGenrePref(country)
+        print(dictIDGenPref)
+
+        #2.passo quello dello start, lo levo dall'insieme generale e passo il nuovo insieme
+        genreStart = dictIDGenPref.pop(start.CustomerId)
+
+        listaClientiAffini = self.buildCSPlan(start, genreStart, dictIDGenPref)
+
+        dictIdCliente_idTracce = DAO.getAllEdgesV2(country, genreStart)
+        listaStart = dictIdCliente_idTracce[start.CustomerId]
+        lista = []
+        for c in listaClientiAffini:
+            listaClienteX = dictIdCliente_idTracce[c.CustomerId]
+            consigliate = list(set(listaClienteX) - set(listaStart))
+            lista.append(consigliate)
+
+        #in questo modo elimino duplicati e unisco la lista di liste in un unica lista
+        listaTracce = list(set(list(itertools.chain.from_iterable(lista))))
+
+        idTracce_Verificati = DAO.getAllVerificati(listaTracce, country, genreStart)
+
+        tracceCSP_Verificati = []
+        for t in idTracce_Verificati:
+            traccia = self._idMapTrack[t[0]]
+            tracceCSP_Verificati.append((traccia, t[1]))
+
+        return tracceCSP_Verificati, DAO.getAllArtistAlbumGenre(country), genreStart
+
+
+
+
+
+
+
+
+
+
+
+
+
+        #3. ora che ho la lista dei nodi vado avanti
 
         #2.prendo dalle liste degli idtracce degli altri tutte le canzoni di quel genre,
         #ma non ancora comprate da start
@@ -83,7 +136,6 @@ class Model:
         #4.restituisco allo start le prime 5 della lista a mo "A [start] potrebbero piacere anche..."
 
         #5.calcolo per ciascuna il numero di clienti che lhanno acquistata "Acquisto verificato da n clienti"
-
 
     def getAllCountry(self):
         return DAO.getAllCountry()
@@ -112,12 +164,6 @@ class Model:
         return lista[:5]
 
     def getTop5Tracks(self, country):
-        self._idMapTrack.clear()
-
-        self._allTracks = DAO.getAllTracks(country)
-        for a in self._allTracks:
-            self._idMapTrack[a.TrackId] = a
-
         listaIDAcquisti = DAO.getAllAcquisti(country)
         dictionaryArtistAlbumGenre = DAO.getAllArtistAlbumGenre(country)
         lista = []

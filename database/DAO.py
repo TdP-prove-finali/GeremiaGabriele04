@@ -228,3 +228,78 @@ class DAO():
         cursor.close()
         conn.close()
         return results
+
+    @staticmethod
+    def getAllGenrePref(country):
+        conn = DBConnect.get_connection()
+
+        results = {}
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select c.CustomerId as idCliente, g.Name as nomeGenre, count(*) as volte
+                    from invoiceline i , invoice i2 , customer c , track t , genre g 
+                    where i.TrackId = t.TrackId and t.GenreId = g.GenreId and i.InvoiceId = i2.InvoiceId and i2.CustomerId = c.CustomerId
+                    and c.Country = %s
+                    group by c.CustomerId , g.Name 
+                    order by c.CustomerId asc, count(*) desc"""
+
+        cursor.execute(query, (country,))
+
+        for row in cursor:
+            if row["idCliente"] not in results.keys():
+                results[row["idCliente"]] = row["nomeGenre"]
+
+        cursor.close()
+        conn.close()
+        return results
+
+    @staticmethod
+    def getAllEdgesV2(country, genre):
+        conn = DBConnect.get_connection()
+
+        results = {}
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select c.CustomerId as customerId, t.TrackId as trackId
+                    from invoiceline i , invoice i2 , customer c , track t , genre g 
+                    where i.TrackId = t.TrackId and t.GenreId = g.GenreId and i.InvoiceId = i2.InvoiceId and i2.CustomerId = c.CustomerId
+                    and c.Country = %s
+                    and g.Name = %s
+                    order by c.CustomerId asc, t.TrackId asc"""
+
+        cursor.execute(query, (country, genre))
+
+        for row in cursor:
+            if row["customerId"] not in results.keys():
+                results[row["customerId"]] = []
+            results[row["customerId"]].append(row["trackId"])
+
+        cursor.close()
+        conn.close()
+        return results
+
+    @staticmethod
+    def getAllVerificati(lista, country, genre):
+        conn = DBConnect.get_connection()
+
+        results = []
+
+        cursor = conn.cursor(dictionary=True)
+        query = """select t.TrackId as trackId, count(*) as volte
+                    from invoiceline i , invoice i2 , customer c , track t , genre g 
+                    where i.TrackId = t.TrackId and t.GenreId = g.GenreId and i.InvoiceId = i2.InvoiceId and i2.CustomerId = c.CustomerId
+                    and c.Country = %s
+                    and g.Name = %s
+                    group by t.TrackId 
+                    order by count(*) desc"""
+
+        cursor.execute(query, (country, genre))
+
+        for row in cursor:
+            if row["trackId"] in lista:
+                results.append((row["trackId"], row["volte"]))
+
+        cursor.close()
+        conn.close()
+        return results[:5]
+
