@@ -46,8 +46,6 @@ class Controller:
 
         self._view.txt_result.controls.clear()
         self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato!", color="green"))
-        self._view.txt_result.controls.append(ft.Text(f"Numero di clienti appartenenti alla nazione selezionata presenti: {self._model.getNumNodi()}."))
-        self._view.txt_result.controls.append(ft.Text("\n"))
         self._view.txt_result.controls.append(ft.Text("Selezionare la funzione d'interesse presente nel sistema."))
         self.fillDDCustomer()
         self._view.update_page()
