@@ -44,7 +44,6 @@ class Model:
                 c1 = self._idMapCustomer[c[0]]
                 c2 = self._idMapCustomer[c[1]]
                 risultato = len(list(set(dictionaryID[c[0]]).intersection(dictionaryID[c[1]])))
-                #print(c[0], c[1], risultato)
                 self._graph.add_edge(c1, c2, weight=risultato)
                 listaAggiunti.append((c[1], c[0]))
 
@@ -52,44 +51,36 @@ class Model:
         parziale = [start]
         tutti_i_nodi = list(self._graph.nodes())
 
-        # Finché non abbiamo visitato tutti i nodi
         while len(parziale) < len(tutti_i_nodi):
             ultimo_nodo = parziale[-1]
             miglior_vicino = None
             max_peso = -1
 
-            # Cerchiamo tra i vicini non ancora visitati
             for n in self._graph.neighbors(ultimo_nodo):
                 if n not in parziale:
-                    # 3. Verifichiamo se il vicino ha il genere preferito richiesto
-                    # (controllando nel nostro dizionario di supporto)
                     genere_vicino = dict_generi_disponibili.get(n.CustomerId)
 
                     if genere_vicino == genere_target:
                         peso = self._graph[ultimo_nodo][n].get('weight', 0)
 
-                        # Scegliamo quello con l'arco più pesante (massimizzando le affinità)
                         if peso > max_peso:
                             max_peso = peso
                             miglior_vicino = n
 
-            # Se nessun vicino soddisfa i requisiti o non ce ne sono altri, ci fermiamo
             if miglior_vicino is None:
                 break
 
             parziale.append(miglior_vicino)
 
-            # (Opzionale ma pulito) Rimuoviamo il nodo appena aggiunto dai disponibili
+            #(opzionale ma pulito) rimuovo il nodo appena aggiunto dai disponibili
             dict_generi_disponibili.pop(miglior_vicino.CustomerId, None)
 
         return parziale[1:]
 
     def getCrossSellingPlan(self, start, country):
-        #1.trovo {idCliente: genrePref, ...}
         dictIDGenPref = DAO.getAllGenrePref(country)
         print(dictIDGenPref)
 
-        #2.passo quello dello start, lo levo dall'insieme generale e passo il nuovo insieme
         genreStart = dictIDGenPref.pop(start.CustomerId)
 
         listaClientiAffini = self.buildCSPlan(start, genreStart, dictIDGenPref)
@@ -102,7 +93,7 @@ class Model:
             consigliate = list(set(listaClienteX) - set(listaStart))
             lista.append(consigliate)
 
-        #in questo modo elimino duplicati e unisco la lista di liste in un unica lista
+        #in questo modo unisco la lista di liste in un unica lista e elimino duplicati
         listaTracce = list(set(list(itertools.chain.from_iterable(lista))))
 
         idTracce_Verificati = DAO.getAllVerificati(listaTracce, country, genreStart)
@@ -114,29 +105,6 @@ class Model:
 
         return tracceCSP_Verificati, DAO.getAllArtistAlbumGenre(country), genreStart
 
-
-
-
-
-
-
-
-
-
-
-
-
-        #3. ora che ho la lista dei nodi vado avanti
-
-        #2.prendo dalle liste degli idtracce degli altri tutte le canzoni di quel genre,
-        #ma non ancora comprate da start
-
-        #3.trovato l'insieme, ranko in ordine decrescente di numero di acquisti (anche su scala mondiale)
-
-        #4.restituisco allo start le prime 5 della lista a mo "A [start] potrebbero piacere anche..."
-
-        #5.calcolo per ciascuna il numero di clienti che lhanno acquistata "Acquisto verificato da n clienti"
-
     def getAllCountry(self):
         return DAO.getAllCountry()
 
@@ -146,14 +114,10 @@ class Model:
     def getNumNodi(self):
         return len(self._graph.nodes)
 
-    def getNumArchi(self):
-        return len(self._graph.edges)
-
     def getTop5Customers(self, country):
         listaIDTotal = DAO.getAllTotali(country)
         dictionaryIDTrack = DAO.getAllEdges(country, self._idMapCustomer)
         lista = []
-        #[(idC, numTrack, total), ...]
 
         for tupla in listaIDTotal:
             customer = self._idMapCustomer[tupla[0]]
@@ -167,6 +131,7 @@ class Model:
         listaIDAcquisti = DAO.getAllAcquisti(country)
         dictionaryArtistAlbumGenre = DAO.getAllArtistAlbumGenre(country)
         lista = []
+
         for tupla in listaIDAcquisti:
             track = self._idMapTrack[tupla[0]]
             artist = dictionaryArtistAlbumGenre[tupla[0]][0]
@@ -185,6 +150,7 @@ class Model:
 
         dictionaryEmpStats = DAO.getAllEmpStats(country)
         lista = []
+
         for idEmp in dictionaryEmpStats.keys():
             emp = self._idMapEmployee[idEmp]
             numClienti = dictionaryEmpStats[idEmp][0]

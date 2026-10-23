@@ -32,7 +32,7 @@ class Controller:
     def handleCreaGrafo(self, e):
         if self._choiceCountry is None:
             self._view.txt_result.controls.clear()
-            self._view.txt_result.controls.append(ft.Text("Per poter procedere, scegliere una nazione.", color="red"))
+            self._view.txt_result.controls.append(ft.Text("Per poter procedere, è necessario selezionare una nazione.", color="red"))
             self._view.update_page()
             return
 
@@ -46,9 +46,9 @@ class Controller:
 
         self._view.txt_result.controls.clear()
         self._view.txt_result.controls.append(ft.Text("Grafo correttamente creato!", color="green"))
-        self._view.txt_result.controls.append(ft.Text("Selezionare una funzione del sistema."))
-        #self._view.txt_result.controls.append(ft.Text(f"Numero di nodi: {self._model.getNumNodi()}"))
-        #self._view.txt_result.controls.append(ft.Text(f"Numero di archi: {self._model.getNumArchi()}"))
+        self._view.txt_result.controls.append(ft.Text(f"Numero di clienti appartenenti alla nazione selezionata presenti: {self._model.getNumNodi()}."))
+        self._view.txt_result.controls.append(ft.Text("\n"))
+        self._view.txt_result.controls.append(ft.Text("Selezionare la funzione d'interesse presente nel sistema."))
         self.fillDDCustomer()
         self._view.update_page()
 
@@ -103,7 +103,7 @@ class Controller:
     def handleCammino(self, e):
         if self._choiceCustomer is None:
             self._view.txt_result.controls.clear()
-            self._view.txt_result.controls.append(ft.Text("Per poter procedere con la generazione del piano di Cross-Selling, selezionare un cliente.", color="red"))
+            self._view.txt_result.controls.append(ft.Text("Per poter procedere con la generazione del piano di Cross-Selling, è necessario selezionare un cliente.", color="red"))
             self._view.update_page()
             return
 
